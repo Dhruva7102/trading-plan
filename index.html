@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhruva's Trading System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Cormorant+Garamond:ital,wght@1,600;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F0EDE6;--bg-deep:#E6E3DA;--bg-warm:#EAE6DC;
+  --card:#FAFAF7;--card-alt:#F3F1EB;
+  --border:#D4D0C5;--border-light:#E2DED6;
+  --text:#2E3529;--text-muted:#6B7264;--text-light:#949C8B;
+  --forest:#2D3A2E;--forest-light:#3E4F3F;
+  --matcha:#7A9B6D;--matcha-light:#9BB88E;--matcha-pale:rgba(122,155,109,.1);
+  --sage:#8BA888;--sage-pale:rgba(139,168,136,.1);
+  --mushroom:#A08B73;--mushroom-light:#BDA68C;--mushroom-pale:rgba(160,139,115,.1);
+  --honey:#C4A35A;--honey-pale:rgba(196,163,90,.1);
+  --slate:#7B96A8;--slate-pale:rgba(123,150,168,.1);
+  --terra:#B07D5B;--terra-pale:rgba(176,125,91,.1);
+  --red-soft:#B85C4F;--red-pale:rgba(184,92,79,.08);
+  --radius:12px;--radius-lg:16px;--radius-sm:8px;
+  --shadow:0 1px 3px rgba(45,58,46,.05),0 4px 12px rgba(45,58,46,.03);
+  --shadow-lg:0 4px 20px rgba(45,58,46,.07);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:400;line-height:1.25}
+h4{font-family:'DM Sans',sans-serif;font-weight:700}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(240,237,230,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);padding:.75rem 0}
+nav .inner{max-width:1140px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;gap:1.5rem;overflow-x:auto}
+nav a{font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;white-space:nowrap;padding:.35rem 0;border-bottom:2px solid transparent;transition:all .2s}
+nav a:hover,nav a.active{color:var(--matcha);border-bottom-color:var(--matcha)}
+nav .brand{font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;color:var(--forest);text-transform:none;letter-spacing:0;font-weight:500;margin-right:auto}
+
+.container{max-width:1140px;margin:0 auto;padding:0 1.5rem}
+section{padding:3.5rem 0 2rem}
+.section-label{font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--matcha);margin-bottom:.5rem}
+.section-title{font-size:1.85rem;margin-bottom:.75rem;color:var(--forest)}
+.section-sub{color:var(--text-muted);max-width:600px;margin-bottom:1.75rem;font-size:.95rem}
+
+/* HERO */
+.hero{padding:2rem 0 0;text-align:center;position:relative;overflow:hidden}
+.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:2.75rem;color:var(--forest);margin-bottom:0;font-weight:500;position:relative;z-index:2}
+.hero-why{position:relative;margin-top:-.5rem;padding:.5rem 1.15rem 1.65rem;z-index:1}
+.hero-why p{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:700;font-size:2.32rem;line-height:1.35;color:#6B2A14;opacity:.3;max-width:960px;margin:0 auto;letter-spacing:.01em;user-select:none}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.75rem;transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card h3{font-size:1.2rem;margin-bottom:.75rem;color:var(--forest)}
+.card-label{font-family:'DM Sans',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:inline-block;padding:.2rem .6rem;border-radius:4px;margin-bottom:.75rem}
+.card-label.green{background:var(--matcha-pale);color:var(--matcha)}
+.card-label.amber{background:var(--honey-pale);color:var(--honey)}
+.card-label.terra{background:var(--terra-pale);color:var(--terra)}
+.card-label.slate{background:var(--slate-pale);color:var(--slate)}
+.card-label.mushroom{background:var(--mushroom-pale);color:var(--mushroom)}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem}
+
+/* SIDEBAR LAYOUT */
+.two-col{display:grid;grid-template-columns:280px 1fr;gap:2rem;align-items:start}
+@media(max-width:768px){.two-col{grid-template-columns:1fr}.grid-2,.grid-3{grid-template-columns:1fr}.hero-why p{font-size:1.15rem}}
+
+.sidebar .card{position:sticky;top:5rem}
+.sidebar .mantra{font-family:'Playfair Display',Georgia,serif;font-style:italic;color:var(--text-muted);padding:.4rem 0;border-bottom:1px solid var(--border-light);font-size:.92rem}
+.sidebar .mantra:last-child{border-bottom:none}
+.risk-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--card-alt);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.5rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:500}
+.risk-badge .dot{width:8px;height:8px;border-radius:50%}
+.risk-badge .dot.intra{background:var(--honey)}
+.risk-badge .dot.overnight{background:var(--terra)}
+
+/* LISTS */
+ul.clean{list-style:none;padding:0}
+ul.clean li{padding:.45rem 0;border-bottom:1px solid var(--border-light);font-size:.9rem;display:flex;align-items:baseline;gap:.5rem}
+ul.clean li:last-child{border-bottom:none}
+ul.clean li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage);flex-shrink:0;margin-top:.45rem}
+
+/* INTERACTIVE CHECKBOXES */
+ul.check{list-style:none;padding:0}
+ul.check li{padding:.45rem 0;border-bottom:1px solid var(--border-light);font-size:.9rem;display:flex;align-items:center;gap:.6rem;cursor:pointer;transition:opacity .2s}
+ul.check li:last-child{border-bottom:none}
+ul.check li.checked{opacity:.45;text-decoration:line-through;text-decoration-color:var(--text-light)}
+ul.check input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;cursor:pointer;transition:all .15s;position:relative;background:var(--card)}
+ul.check input[type="checkbox"]:checked{background:var(--matcha);border-color:var(--matcha)}
+ul.check input[type="checkbox"]:checked::after{content:'';position:absolute;left:5px;top:2px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+ul.check input[type="checkbox"]:hover{border-color:var(--sage)}
+
+/* STRATEGY CARDS */
+.strategy-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:box-shadow .2s}
+.strategy-card:hover{box-shadow:var(--shadow-lg)}
+.strategy-header{padding:1.5rem 1.75rem 1rem;border-bottom:1px solid var(--border-light)}
+.strategy-header h3{font-size:1.3rem;color:var(--forest);margin-bottom:.25rem}
+.strategy-header .schedule{font-size:.78rem;color:var(--text-light);font-family:'JetBrains Mono',monospace}
+.strategy-body{padding:1.25rem 1.75rem 1.75rem}
+.strategy-body h4{font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--matcha);margin:1.25rem 0 .5rem}
+.strategy-body h4:first-child{margin-top:0}
+.strategy-body p,.strategy-body li{font-size:.88rem;color:var(--text)}
+.strategy-body ul{list-style:none;padding:0}
+.strategy-body ul li{padding:.25rem 0;display:flex;gap:.5rem;align-items:baseline}
+.strategy-body ul li::before{content:'—';color:var(--sage);font-weight:700;flex-shrink:0}
+
+/* TABLES */
+table.risk-table{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:.5rem}
+table.risk-table th{text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:.5rem .75rem;border-bottom:2px solid var(--border)}
+table.risk-table td{padding:.55rem .75rem;border-bottom:1px solid var(--border-light)}
+table.risk-table tr:last-child td{border-bottom:none}
+table.risk-table .consequence{color:var(--red-soft);font-weight:500}
+table.criteria{width:100%;border-collapse:collapse;font-size:.82rem;margin:.5rem 0}
+table.criteria th{text-align:left;font-weight:600;font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);padding:.4rem .5rem;background:var(--card-alt);border-bottom:1px solid var(--border)}
+table.criteria td{padding:.4rem .5rem;border-bottom:1px solid var(--border-light)}
+
+/* THERAPY */
+.therapy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem}
+.therapy-item{background:var(--card-alt);border-radius:var(--radius);padding:1.15rem;border-left:3px solid var(--sage)}
+.therapy-item .trigger{font-weight:600;color:var(--forest);margin-bottom:.3rem;font-size:.92rem}
+.therapy-item .response{font-size:.85rem;color:var(--text-muted)}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:1.75rem}
+.timeline::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;padding-bottom:1.4rem}
+.tl-item::before{content:'';position:absolute;left:-1.75rem;top:.35rem;width:12px;height:12px;border-radius:50%;background:var(--card);border:2px solid var(--sage)}
+.tl-item .tl-time{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--matcha);font-weight:500}
+.tl-item .tl-label{font-weight:600;font-size:.88rem;margin:.1rem 0}
+.tl-item .tl-desc{font-size:.82rem;color:var(--text-muted)}
+
+/* METRICS */
+.metric{text-align:center;padding:1.25rem}
+.metric .num{font-family:'Playfair Display',Georgia,serif;font-size:1.85rem;color:var(--matcha)}
+.metric .label{font-size:.78rem;color:var(--text-muted);margin-top:.2rem}
+
+/* DEMON CARD */
+.demon-card{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-light) 100%);color:rgba(240,237,230,.88);border-radius:var(--radius-lg);padding:2rem 2.5rem}
+.demon-card h3{color:var(--matcha-light);font-size:1.3rem;margin-bottom:.75rem}
+.demon-card p{font-size:.9rem;line-height:1.7;margin-bottom:.6rem}
+.demon-card strong{color:#fff}
+
+/* CONTRACT */
+.contract{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;margin-top:1.5rem}
+.contract ul{list-style:none;padding:0}
+.contract li{padding:.45rem 0;border-bottom:1px solid var(--border-light);font-size:.9rem;display:flex;gap:.5rem;align-items:center}
+.contract li:last-child{border-bottom:none}
+.contract input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid var(--matcha);border-radius:5px;flex-shrink:0;cursor:pointer;transition:all .15s;position:relative;background:var(--card)}
+.contract input[type="checkbox"]:checked{background:var(--matcha);border-color:var(--matcha)}
+.contract input[type="checkbox"]:checked::after{content:'';position:absolute;left:5px;top:2px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+
+footer{margin-top:3rem;padding:2rem 0;border-top:1px solid var(--border);text-align:center;color:var(--text-light);font-size:.8rem}
+
+/* TABS */
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.tab-btn{font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;padding:.45rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);color:var(--text-muted);cursor:pointer;transition:all .2s}
+.tab-btn:hover{border-color:var(--sage);color:var(--text)}
+.tab-btn.active{background:var(--forest);color:rgba(240,237,230,.95);border-color:var(--forest)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+.divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a href="#" class="brand">Dhruva's Trading System</a>
+    <a href="#strategies">Strategies</a>
+    <a href="#checklist">Checklist</a>
+    <a href="#risk">Risk</a>
+    <a href="#daily">Daily Routine</a>
+    <a href="#mental">Mental Game</a>
+    <a href="#objectives">Objectives</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>Dhruva's Trading System</h1>
+    <div class="hero-why">
+      <p>I want my time back. Life is too short &mdash; I want to be creative, write poetry, dance, and play. I want money to stop being a factor in my decisions so I can experience life in a painfully raw way.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TOP AREA: Sidebar + Strategies + Checklist -->
+<section id="strategies" style="padding-top:1.5rem">
+  <div class="container">
+    <div class="two-col">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="card">
+          <h3>Mantras</h3>
+          <div style="margin-top:.6rem">
+            <div class="mantra">"All the rules are MY rules"</div>
+            <div class="mantra">"I am responsible for everything"</div>
+            <div class="mantra">"The way things are right now are the only way they can be"</div>
+            <div class="mantra">"I am not this body, I am not this mind"</div>
+            <div class="mantra">"I am a mother to the world"</div>
+          </div>
+          <hr class="divider">
+          <h3>Risk</h3>
+          <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.6rem">
+            <div class="risk-badge"><span class="dot intra"></span> $200 Intraday</div>
+            <div class="risk-badge"><span class="dot overnight"></span> $700 Overnight</div>
+          </div>
+          <hr class="divider">
+          <h3>Execution Cue</h3>
+          <p style="font-family:'Playfair Display',Georgia,serif;font-style:italic;color:var(--text-muted);margin-top:.4rem;font-size:.9rem">"I execute my plan. I do not chase. I do not force."</p>
+          <hr class="divider">
+          <h3>System Rules</h3>
+          <ul class="clean" style="margin-top:.5rem">
+            <li>Define trade parameters before entry</li>
+            <li>If edge is met, take it without hesitation</li>
+            <li>Exit if volume degrades and stock stalls</li>
+            <li>3 consecutive losses = done for the day</li>
+            <li>Break ONE rule = done for the day</li>
+            <li>No journal, no trade</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div>
+        <p class="section-label">Playbook</p>
+        <h2 class="section-title">Strategy Cards</h2>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="momentum">Momentum Gaps</button>
+          <button class="tab-btn" data-tab="intraday">Intra-Day Stocks</button>
+          <button class="tab-btn" data-tab="scalps">Extension Scalps</button>
+          <button class="tab-btn" data-tab="swing">Swing Newsletter</button>
+          <button class="tab-btn" data-tab="wheel">Wheel Strategy</button>
+        </div>
+
+        <!-- MOMENTUM GAPS -->
+        <div class="tab-panel active" id="tab-momentum">
+          <div class="strategy-card">
+            <div class="strategy-header">
+              <span class="card-label green">Momentum</span>
+              <h3>Momentum Gaps</h3>
+              <div class="schedule">Tuesdays, 11:00 AM – 1:00 PM</div>
+            </div>
+            <div class="strategy-body">
+              <p>Profit from equities with opening gaps breaking market structure &mdash; early and aggressive entries for momentum-fueled morning moves.</p>
+
+              <h4>The Edge</h4>
+              <ul>
+                <li>Stock has Pro/Novice Gap graded B or better</li>
+                <li>Void between congestion zones</li>
+                <li>Valid entry pattern</li>
+                <li>LOD/HOD initial stop</li>
+                <li>Target within ATR, sized appropriately</li>
+              </ul>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+                <div>
+                  <h4>Pro Gap: Flash ORB</h4>
+                  <p style="font-size:.85rem">Set stop at LOD/HOD. Move as pattern confirms and pivots form.</p>
+                </div>
+                <div>
+                  <h4>Novice Gap: Curl</h4>
+                  <p style="font-size:.85rem">Reversal wedge pattern. Buy/Sell setup.</p>
+                </div>
+              </div>
+
+              <h4>Criteria</h4>
+              <ul>
+                <li>Stock trending in direction of trade</li>
+                <li>Relative Strength/Weakness to market</li>
+                <li>Above/Below VWAP for longs/shorts</li>
+              </ul>
+
+              <h4>Entry</h4>
+              <ul>
+                <li>First candle to close on a new high</li>
+                <li>ORB: opening candle sets range, trade triggers on break</li>
+                <li>Stop-Out Reentry when stock full-stops initial entry</li>
+                <li>Above VWAP &amp; 21EMA on 5-min</li>
+                <li>Low volume pullback / high volume breakout</li>
+                <li>Volume > 1M average daily</li>
+              </ul>
+
+              <h4>Exit</h4>
+              <ul>
+                <li>Low of previous candle after breakout</li>
+                <li>Critical structural levels (resistance or HOD)</li>
+                <li>Huge sellers on Level 2</li>
+                <li>Breakout or Bailout!</li>
+              </ul>
+
+              <h4>Risk Management</h4>
+              <table class="risk-table">
+                <tr><td>Risk per trade</td><td><strong>$150</strong></td></tr>
+                <tr><td>Risk per day</td><td><strong>$450 or 3R</strong></td></tr>
+                <tr><td>Targets</td><td><strong>1.5R</strong> with pivot SL management</td></tr>
+              </table>
+
+              <h4>Abort If</h4>
+              <ul>
+                <li>Heading into news event</li>
+                <li>Sudden volume dropoff</li>
+                <li>Abnormal market volatility against trade</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTRA-DAY STOCKS -->
+        <div class="tab-panel" id="tab-intraday">
+          <div class="strategy-card">
+            <div class="strategy-header">
+              <span class="card-label amber">Intra-Day</span>
+              <h3>Intra-Day Stocks</h3>
+              <div class="schedule">Tuesdays &amp; Thursdays, 2:00 PM – 4:00 PM</div>
+            </div>
+            <div class="strategy-body">
+              <h4>Setups</h4>
+              <p>Any PTS pattern is valid. Buy/Sell setup.</p>
+
+              <h4>Criteria</h4>
+              <ul>
+                <li>Stock trending in direction of trade</li>
+                <li>Relative Strength/Weakness to market</li>
+                <li>Above/Below VWAP for longs/shorts</li>
+              </ul>
+
+              <h4>Entry</h4>
+              <ul>
+                <li>First candle to close on a new high</li>
+                <li>ORB: opening candle sets range</li>
+                <li>Stop-Out Reentry</li>
+                <li>Above VWAP &amp; 21EMA on 5-min</li>
+                <li>Low volume pullback / high volume breakout</li>
+                <li>Volume > 1M average daily</li>
+              </ul>
+
+              <h4>Entry Points</h4>
+              <ul>
+                <li>First candle to make a new high (on increasing volume)</li>
+                <li>Retest of the breakout spot</li>
+              </ul>
+
+              <h4>Exit</h4>
+              <ul>
+                <li>Low of previous candle after breakout</li>
+                <li>Critical structural levels (resistance or HOD)</li>
+                <li>Huge sellers on Level 2</li>
+                <li>Breakout or Bailout!</li>
+              </ul>
+
+              <h4>Risk Management</h4>
+              <table class="risk-table">
+                <tr><td>Risk per trade</td><td><strong>$150</strong></td></tr>
+                <tr><td>Risk per day</td><td><strong>$450 or 3R</strong></td></tr>
+                <tr><td>Targets</td><td><strong>1.5R</strong> — BE at ~0.75R</td></tr>
+              </table>
+
+              <h4>Abort If</h4>
+              <ul>
+                <li>Sudden volume dropoff</li>
+                <li>Volatile market shift against trade</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXTENSION SCALPS -->
+        <div class="tab-panel" id="tab-scalps">
+          <div class="strategy-card">
+            <div class="strategy-header">
+              <span class="card-label terra">Scalps</span>
+              <h3>Extension Scalps</h3>
+              <div class="schedule">Tuesdays, 11:00 AM – 1:00 PM</div>
+            </div>
+            <div class="strategy-body">
+              <p>Profit from microscopic price movements &mdash; small contra-trend reactions to extended moves into market structure or trendlines.</p>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem">
+                <div>
+                  <h4>Range Scalp</h4>
+                  <ul>
+                    <li>Stocks moving into trendlines of S/R in a channel, wedge, or triangle</li>
+                    <li>Entry at touch of trendline for reversal</li>
+                    <li>Targets: 2m 9EMA or 2m 21EMA / 5m 9EMA</li>
+                    <li>Stop: prior pivot confirming breakout</li>
+                  </ul>
+                  <p style="font-size:.82rem;color:var(--text-muted);margin-top:.5rem">Price-to-EMA gap MUST exceed trendline-to-pivot gap.</p>
+                </div>
+                <div>
+                  <h4>Extension Scalp</h4>
+                  <p style="font-size:.85rem">Needs to be extended. See criteria checklist below.</p>
+                </div>
+              </div>
+
+              <h4>Rules</h4>
+              <ul>
+                <li><strong>$1.50 HARD STOP</strong> on options scalps</li>
+                <li>If trade moves against you and comes back to BE, take BE</li>
+                <li>DO NOT hold scalps for a recovery</li>
+                <li>$3.00 down in one day = lockout</li>
+                <li>NO overnight holding</li>
+                <li>Do not scalp on earnings day</li>
+                <li>If 5m 9EMA catches up to your trade, exit &mdash; no longer extended</li>
+                <li>DO NOT scalp power trends (price hugging 9EMA on 1m)</li>
+                <li>Do not trade the first 5 minutes of price action</li>
+              </ul>
+
+              <h4>Scalp Criteria Checklist</h4>
+              <table class="criteria">
+                <thead><tr><th colspan="2">Main Requirements</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Going into resistance/support on DAILY, 65 or 15 min</td></tr>
+                  <tr><td>2</td><td>Extended &ge;5 green/red bars on 5min, >2-3 bars on 15min</td></tr>
+                  <tr><td>3</td><td>ATR is above 75%</td></tr>
+                </tbody>
+              </table>
+              <table class="criteria" style="margin-top:.75rem">
+                <thead><tr><th colspan="2">Secondary Requirements</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Extended away from 9EMA on 5min &amp; 15min (9EMA &lt;50&deg;)</td></tr>
+                  <tr><td>2</td><td>Higher timeframe in alignment + extended into S/R area</td></tr>
+                  <tr><td>3</td><td>Market bias in alignment</td></tr>
+                  <tr><td>4</td><td>Technical pattern present</td></tr>
+                </tbody>
+              </table>
+
+              <h4>Take Profit</h4>
+              <ul>
+                <li>VWAP (if nearest)</li>
+                <li>9EMA on the 5-min</li>
+                <li>Whichever first hits $0.30/contract</li>
+              </ul>
+
+              <h4>Avoid</h4>
+              <ul>
+                <li>Do not take after 12:00 PM on any day</li>
+                <li>Avoid on Fridays</li>
+                <li>Do not take on power trend moves</li>
+                <li>Do not hold to end of day</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- SWING NEWSLETTER -->
+        <div class="tab-panel" id="tab-swing">
+          <div class="strategy-card">
+            <div class="strategy-header">
+              <span class="card-label slate">Swing</span>
+              <h3>Swing Newsletter</h3>
+              <div class="schedule">Fridays, 1:00 PM – 3:00 PM</div>
+            </div>
+            <div class="strategy-body">
+              <p>Copy-trading strategy based on Anmol Singh's newsletter.</p>
+
+              <h4>Rules</h4>
+              <ul>
+                <li>Stage the setup the instant the trade is called out</li>
+                <li>Sell when Anmol sells, no exceptions</li>
+                <li>If called exit is missed, take best possible exit ASAP</li>
+                <li>Always analyze a trade on my own to deduce possible rationale</li>
+              </ul>
+
+              <h4>Sizing</h4>
+              <ul>
+                <li><strong>Options:</strong> &frac12; Anmol's size &pm;20% (2-3 contracts to his 5, 4-6 to his 10)</li>
+                <li>For Stage 2-3 extension reversals &mdash; tend toward the lower end</li>
+                <li><strong>Stock Positions:</strong> $1,000 risk per trade or buying power limitation, whichever first</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- WHEEL STRATEGY -->
+        <div class="tab-panel" id="tab-wheel">
+          <div class="strategy-card">
+            <div class="strategy-header">
+              <span class="card-label mushroom">Options</span>
+              <h3>Wheel Strategy</h3>
+              <div class="schedule">Mondays, 3:00 PM – 5:00 PM</div>
+            </div>
+            <div class="strategy-body">
+              <p>Income generation through selling cash-secured puts (CSPs) and covered calls (CCs). Ideal for sideways or slightly bullish markets with fundamentally sound stocks.</p>
+
+              <h4>Technical Analysis</h4>
+              <ul>
+                <li>Support/Resistance analysis</li>
+                <li>Ensure uptrending 50EMA &mdash; price pops above flat 50EMA at high volume</li>
+                <li>Delta close to 0.3-0.4 (lower premiums, less likely assignment)</li>
+                <li>Implied Volatility between 30-70%</li>
+              </ul>
+
+              <h4>Rules</h4>
+              <ul>
+                <li>Look for stocks moving sideways or slightly upward</li>
+                <li>If stock declining but good fundamentals &mdash; target strong support</li>
+                <li>VIX &lt; 40%</li>
+                <li>High volume trading (&gt;200K/day) for narrow premium spreads</li>
+                <li>Stock price &gt; 50 EMA (bullish trend)</li>
+                <li>No upcoming earnings announcements</li>
+                <li>Avoid media-hyped tickers</li>
+                <li>No penny stocks &lt;$5 (above $10 ideal), no low volume under 1M/day</li>
+                <li>ETFs fine but no leveraged or inverse ETFs</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHECKLIST -->
+<section id="checklist" style="background:var(--bg-deep);padding:3rem 0">
+  <div class="container">
+    <p class="section-label">Pre-Market</p>
+    <h2 class="section-title">Checklist</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Setup &amp; Analysis</h3>
+        <ul class="check" style="margin-top:.6rem">
+          <li><input type="checkbox"><span>Set up trading platform and tools</span></li>
+          <li><input type="checkbox"><span>Determine market bias (bullish, bearish, neutral)</span></li>
+          <li><input type="checkbox"><span>Review personal trading plan</span></li>
+          <li><input type="checkbox"><span>Check news and earnings</span></li>
+          <li><input type="checkbox"><span>Identify key support and resistance levels</span></li>
+          <li><input type="checkbox"><span>Confirm risk management parameters</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Mental Preparation</h3>
+        <ul class="check" style="margin-top:.6rem">
+          <li><input type="checkbox"><span>Determine personal bias &mdash; Fear (1) to Greed (10)</span></li>
+          <li><input type="checkbox"><span>Am I able to think in terms of probabilities today?</span></li>
+          <li><input type="checkbox"><span>Am I in a carefree state willing to take risks?</span></li>
+          <li><input type="checkbox"><span>Can I go through today as a consistently successful trader?</span></li>
+          <li><input type="checkbox"><span>Am I willing to write a check on EVERY transaction?</span></li>
+          <li><input type="checkbox"><span>Can I evaluate market information as neutral?</span></li>
+          <li><input type="checkbox"><span>Every situation in the market is completely unique</span></li>
+          <li><input type="checkbox"><span>Am I willing to see mistakes only as experiences?</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RISK / DRAWDOWNS -->
+<section id="risk">
+  <div class="container">
+    <p class="section-label">Capital Preservation</p>
+    <h2 class="section-title">Drawdown Limits</h2>
+    <p class="section-sub">When limits are reached, immediately stop live trading. Analyze trades or paper trade.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Loss Limits</h3>
+        <table class="risk-table" style="margin-top:.6rem">
+          <thead><tr><th>Unit</th><th>Max Loss</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Per trade</td><td>1R</td><td></td></tr>
+            <tr><td>3 consecutive losses</td><td></td><td class="consequence">Immediate stop</td></tr>
+            <tr><td>Per day</td><td>3R</td><td class="consequence">Immediate stop</td></tr>
+            <tr><td>Per week</td><td>7R</td><td class="consequence">Immediate stop</td></tr>
+            <tr><td>Per month</td><td>15R</td><td class="consequence">Immediate stop</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Post-Market Tracking</h3>
+        <p style="font-size:.88rem;color:var(--text-muted);margin:.6rem 0">By 11:00 AM the trading is done. Data work begins.</p>
+        <ul class="clean">
+          <li>Entry, stop, and exit</li>
+          <li>Setup and pattern type</li>
+          <li>Management decisions</li>
+          <li>Context and reasoning</li>
+          <li>Mistakes and missed opportunities</li>
+          <li>Execution quality</li>
+          <li>Emotional state, hesitation, or forcing</li>
+          <li>Free-form emotional journal after data logging</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:1.25rem">
+      <div class="card">
+        <h3>Weekly Review</h3>
+        <p style="font-size:.88rem;color:var(--text-muted);margin-top:.5rem">Review all trades &mdash; winning and losing. Identify repeating strengths, mistakes, and patterns. Ask what was clean, what was forced, what kept repeating.</p>
+      </div>
+      <div class="card">
+        <h3>Monthly Review</h3>
+        <p style="font-size:.88rem;color:var(--text-muted);margin-top:.5rem">Pull up winning and losing trades in chart format. Redraw lines by hand. Study structure in detail. Mark entries, exits, lines, targets, and problem areas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DAILY ROUTINE -->
+<section id="daily" style="background:var(--bg-deep);padding:3.5rem 0">
+  <div class="container">
+    <p class="section-label">Daily Execution</p>
+    <h2 class="section-title">Daily Timeline</h2>
+    <p class="section-sub">The operating rhythm. Follow the same sequence every day.</p>
+
+    <div class="grid-2">
+      <div class="card" style="padding:1.75rem">
+        <h3 style="margin-bottom:1rem">Pre-Market &amp; Open</h3>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-time">8:40 AM</div>
+            <div class="tl-label">Lock In</div>
+            <div class="tl-desc">Shift into trader mode. Freshen up. Coffee, water, electrolytes.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">8:40 – 9:00 AM</div>
+            <div class="tl-label">Personal Reset</div>
+            <div class="tl-desc">2-5 min positive input. No random scrolling. No external noise.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">9:00 – 9:10 AM</div>
+            <div class="tl-label">Desk Activation</div>
+            <div class="tl-desc">Open platform, charting, chat room. Verify feeds, hotkeys, layouts.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">9:10 – 9:20 AM</div>
+            <div class="tl-label">Primary Scan &amp; Mapping</div>
+            <div class="tl-desc">Scan for gaps. Review monthly, weekly, daily, 60min charts. Draw trend lines, S/R, gap levels. Check ATR.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">9:20 – 9:25 AM</div>
+            <div class="tl-label">Refine Watch List</div>
+            <div class="tl-desc">Apply gap criteria, shorten list, check chat room for missed names. Pick your favorite setup.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">9:28 – 9:29 AM</div>
+            <div class="tl-label">Anchor &amp; Breathe</div>
+            <div class="tl-desc">NLP anchor. Deep breaths. Enter the session deliberate and resourceful.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">9:30 – 9:45 AM</div>
+            <div class="tl-label">Open Execution</div>
+            <div class="tl-desc">Focus on the gap list. Let opportunities develop. Stay with prepared names first.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-time">After gap list</div>
+            <div class="tl-label">Secondary Focus</div>
+            <div class="tl-desc">Move to carryover list or broader universe only when appropriate.</div>
+          </div>
+          <div class="tl-item" style="padding-bottom:0">
+            <div class="tl-time">By 11:00 AM</div>
+            <div class="tl-label">Tracking &amp; Review</div>
+            <div class="tl-desc">Update trade log. Complete journal. Brief emotional check-in.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:1.25rem">
+          <h3>Execution Decision Rules</h3>
+          <table class="risk-table" style="margin-top:.6rem">
+            <thead><tr><th>Scenario</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>5+ solid gap ideas</td><td>Stay focused on the gap list only</td></tr>
+              <tr><td>&lt;5 ideas</td><td>Supplement with carryover list during pre-market</td></tr>
+              <tr><td>Gap list dries up</td><td>Move to prior day carryover list</td></tr>
+              <tr><td>Everything junk after 10 AM</td><td>Look at broader stock universe after primary work</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-bottom:1.25rem">
+          <h3>Non-Negotiables</h3>
+          <ul class="check" style="margin-top:.6rem">
+            <li><input type="checkbox"><span>By 8:40 AM &mdash; mentally in trading mode</span></li>
+            <li><input type="checkbox"><span>By 9:00 AM &mdash; desk and platforms fully ready</span></li>
+            <li><input type="checkbox"><span>By 9:20-9:25 AM &mdash; watch list built and narrowed</span></li>
+            <li><input type="checkbox"><span>By 9:28-9:29 AM &mdash; anchor and breathing complete</span></li>
+            <li><input type="checkbox"><span>By 11:00 AM &mdash; trade log and journal updated</span></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Scan Sources</h3>
+          <ul class="clean" style="margin-top:.6rem">
+            <li><strong>Primary:</strong> stocktwits.com/openoutcrier</li>
+            <li><strong>Backup:</strong> investing.com/equities/pre-market</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENTAL GAME -->
+<section id="mental">
+  <div class="container">
+    <p class="section-label">Psychology</p>
+    <h2 class="section-title">The Mental Game</h2>
+    <p class="section-sub">The market does not care about you. Traders need only two things: calm and confidence.</p>
+
+    <div class="grid-2" style="margin-bottom:1.75rem">
+      <div class="card">
+        <h3>Core Beliefs</h3>
+        <ul class="clean" style="margin-top:.6rem">
+          <li>Embrace probabilistic outcomes &mdash; no single trade is crucial</li>
+          <li>Maintain emotional equilibrium &mdash; let the plan dictate, not emotions</li>
+          <li>Accept risk and release control &mdash; focus on strategy, not the market</li>
+          <li>Detach from outcomes &mdash; focus on process and execution quality</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--red-soft)">Be the Casino, Not the Gambler</h3>
+        <ul class="clean" style="margin-top:.6rem">
+          <li>Be calm in a winning streak &mdash; wins are just as random as losses</li>
+          <li>Be confident during a losing streak &mdash; it doesn't destroy your edge</li>
+          <li>Every spin, roll, hand, or dice is a unique outcome</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.2rem;margin-bottom:1rem">Self-Therapy</h3>
+    <div class="therapy-grid">
+      <div class="therapy-item">
+        <div class="trigger">FOMO?</div>
+        <div class="response">You're always going to miss moves. Take what you need and never be greedy.</div>
+      </div>
+      <div class="therapy-item">
+        <div class="trigger">Scared?</div>
+        <div class="response">Be confident in your strategy and your setup. This works.</div>
+      </div>
+      <div class="therapy-item">
+        <div class="trigger">Analysis Paralysis?</div>
+        <div class="response">Play out your edge. Think like a casino &mdash; every outcome is unique.</div>
+      </div>
+      <div class="therapy-item">
+        <div class="trigger">Breaking Rules?</div>
+        <div class="response">You'll never be successful without a plan.</div>
+      </div>
+      <div class="therapy-item">
+        <div class="trigger">Impatient?</div>
+        <div class="response">Money is transferred from the impatient to the patient.</div>
+      </div>
+      <div class="therapy-item">
+        <div class="trigger">Frustrated?</div>
+        <div class="response">Take time off the charts and do something else.</div>
+      </div>
+      <div class="therapy-item">
+        <div class="trigger">Overtrading?</div>
+        <div class="response">Stick to your trading plan.</div>
+      </div>
+      <div class="therapy-item">
+        <div class="trigger">Revenge Trading?</div>
+        <div class="response">You are not bigger than the charts. It doesn't owe you anything.</div>
+      </div>
+    </div>
+
+    <div class="demon-card" style="margin-top:1.75rem">
+      <h3>My Demons</h3>
+      <p>Because you didn't manage your money you blew up accounts. You owe it to yourself to save yourself from the pain of what you had to shoulder these past years.</p>
+      <p><strong>All it takes is ONE trade to take you out of the game FOREVER.</strong></p>
+      <p>Spready or whippy stocks KILL you. They trigger your primal fears. STAY AWAY. These stocks are not meant for traders &mdash; they are meant for retail investors. Trading them is trading consistency for short-term gains.</p>
+      <p><strong>You are NOT trying to make money. You are learning a skill.</strong></p>
+      <p>I have a CHRONIC problem moving my TPs around. Even when the market gives ample evidence the trade has worked, I play it tight.</p>
+    </div>
+
+    <div class="contract">
+      <h3>Trader Identity Contract</h3>
+      <p style="font-size:.88rem;color:var(--text-muted);margin:.6rem 0">A trader who follows this playbook is agreeing to a standard.</p>
+      <ul>
+        <li><input type="checkbox"><span>I do not chase random trades</span></li>
+        <li><input type="checkbox"><span>I do not skip the scanning process</span></li>
+        <li><input type="checkbox"><span>I do not trade without context</span></li>
+        <li><input type="checkbox"><span>I do not confuse activity with productivity</span></li>
+        <li><input type="checkbox"><span>I respect the open and stay focused on prepared names first</span></li>
+        <li><input type="checkbox"><span>I track with detail because vague data creates vague results</span></li>
+        <li><input type="checkbox"><span>I review because repetition without review does not create mastery</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- OBJECTIVES (moved down) -->
+<section id="objectives" style="background:var(--bg-deep);padding:3rem 0">
+  <div class="container">
+    <p class="section-label">Targets</p>
+    <h2 class="section-title">Objectives &amp; Metrics</h2>
+    <div class="grid-3">
+      <div class="card" style="text-align:center">
+        <p class="section-label" style="margin-bottom:.2rem">2026 Target</p>
+        <div class="metric"><div class="num">$10K</div><div class="label">per month &middot; $120K/year</div></div>
+        <p style="font-size:.82rem;color:var(--text-muted)">$3K day trades &middot; $3K swings &middot; $5K covered calls</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <p class="section-label" style="margin-bottom:.2rem">Long-Term Target</p>
+        <div class="metric"><div class="num">$25K</div><div class="label">per month &middot; $300K/year</div></div>
+      </div>
+      <div class="card" style="text-align:center">
+        <p class="section-label" style="margin-bottom:.2rem">Monthly Goal</p>
+        <div class="metric"><div class="num">10+ R</div><div class="label">per month</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.25rem">
+      <h3>Risk Scaling Rules</h3>
+      <table class="risk-table" style="margin-top:.6rem">
+        <thead><tr><th>Trigger</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Every <strong>20R earned</strong></td><td style="color:var(--matcha);font-weight:600">Increase risk</td></tr>
+          <tr><td>Every <strong>10R lost</strong></td><td class="consequence">Decrease risk</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>The edge is in the consistency of the process. Run the same sequence every day.</p>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('ul.check input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    cb.closest('li').classList.toggle('checked', cb.checked);
+  });
+});
+
+const navLinks = document.querySelectorAll('nav a:not(.brand)');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector('nav a[href="#' + entry.target.id + '"]');
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
