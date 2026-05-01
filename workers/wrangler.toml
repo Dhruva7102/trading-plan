@@ -1,0 +1,3 @@
+name = "trading-stocktwits-trending"
+main = "stocktwits-trending.js"
+compatibility_date = "2025-04-01"
